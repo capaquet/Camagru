@@ -30,6 +30,7 @@ services:
    restart: always
    volumes:
    - .:/app
+   - ./config/php.ini.default:/opt/docker/etc/php/php.ini
    ports:
    - "80:80"
    - "443:443"
