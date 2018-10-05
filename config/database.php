@@ -1,9 +1,10 @@
 <?php
-  $DB_DSN = "mysql:dbname=camagru_db;host=db;port=3306";
-  $DB_INIT = "mysql:host=db;port=3306";
-  $DB_USER = "root";
-  $DB_PASSWORD = "capwd";
-
-  $DB_NAME = "camagru_db";
-  $TABLE_USER = "user"
+$db_config = [
+    "dns" => "mysql:dbname=camagru_db;host=db;port=3306",
+    "user" => "root",
+    "pwd" => "capwd",
+    "init" => "mysql:host=db;port=3306",
+    "db_name" => "camagru_db",
+    "user_table" => "user_info",
+    ];
 ?>
