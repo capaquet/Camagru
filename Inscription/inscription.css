@@ -1,0 +1,21 @@
+body
+{
+    background-image: url(background/pexels-photo-953214.jpeg);
+}
+
+.inscription
+{
+  color: #708090;
+  border-color: #F0FFFF;
+  background-color: #F0F8FF;
+  font-size: 2.5em;
+  font-family: comic sans-serif;
+  width: 300px;
+  height: 400px;
+  margin: auto;
+  margin-top: 10vmin;
+  border-style: solid;
+  border-radius: 15px;
+  display: block;
+  box-shadow: 20px  #888888
+}
