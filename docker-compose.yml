@@ -6,10 +6,10 @@ services:
    image: mysql:5.7
    restart: always
    environment:
-    MYSQL_USER: cap
-    MYSQL_PASSWORD: capwd
+#   MYSQL_ROOT: cap
+#    MYSQL_PASSWORD: capwd
     MYSQL_ROOT_PASSWORD: capwd
-    MYSQL_DATABASE: databse
+#    MYSQL_DATABASE: database
    volumes:
    - ./mysql:/var/lib/mysql
    ports:
