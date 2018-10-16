@@ -1,5 +1,5 @@
 <?php
-require('database.php');
+require_once('database.php');
 
 init_db($db_config);
 
@@ -22,7 +22,7 @@ try
   echo "Database created successfully <br />";
   }
   catch(PDOException $e){
-      die("ERROR: Could not able to execute $sql. " . $e->getMessage());
+    die("ERROR: Could not able to execute $sql. " . $e->getMessage());
   }
 
 //Creation of user table
@@ -31,9 +31,10 @@ try
   $sql = "CREATE TABLE IF NOT EXISTS ".$db_config['db_name'].".".$db_config['user_table']."
   (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
    login VARCHAR(30) UNIQUE NOT NULL COLLATE utf8_general_ci,
-   password VARCHAR(61) NOT NULL COLLATE utf8_general_ci,
+   password VARCHAR(60) NOT NULL COLLATE utf8_general_ci,
    email VARCHAR(50) UNIQUE NOT NULL COLLATE utf8_general_ci,
-   confirmation BOOLEAN DEFAULT 0,
+   confirmation_token VARCHAR(60),
+   confirmation_date DATETIME,
    notification BOOLEAN DEFAULT 1,
    admim_status BOOLEAN DEFAULT 0
   )";
