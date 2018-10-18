@@ -1,11 +1,9 @@
 <?php require 'includes/header.php';?>
 <?php require 'includes/tools.php';?>
-
+<?php require 'includes/bootstrap.php';?>
 <?php
     if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
         require 'includes/db.php';
-
-        var_dump($_POST['username']);
         $req = $pdo->prepare("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE (login = :username OR email = :username)");
         $req->execute(['username' => $_POST['username']]);
         $user = $req->fetch();
@@ -16,11 +14,10 @@
             exit();
         }
         else{
-            var_dump($_SESSION);
             $_SESSION['flash']['danger'] = "Email ou mot de passe incorrect";
             header('location: login.php');
+            exit();
         }
-    
     }
 ?>
 
@@ -34,6 +31,7 @@
     <div class="form-group">
         <label for="">Password</label>
         <input type="password" name="password" class="form-control"/>
+        <a href="forget.php">Mot de pass oublié</a>
     </div>
     <div>
         <button type="submit" class="btn btn-summary"> Soumettre</button>

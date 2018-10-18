@@ -1,45 +1,37 @@
 <?php
-require_once "includes/db.php";
-require_once "includes/tools.php";
-    
-    session_start();
+    require 'includes/bootstrap.php';
+
     if (!empty($_POST)){
+
         $errors = array();
-        if(empty($_POST['username']) || !preg_match('/^[a-zA-Z0-9]+$/', $_POST['username'])){
-            $errors['username'] = "Pseudo invalide";
+        $db = App::getDatabase();
+
+//Vérication des informations utilisateurs
+        $validator = new Validator($_POST);
+        $validator->isAlpha_num('username', "Ce pseudo n'est pas valide.");
+        if ($validator->isValid()){
+            $validator->isUniq('username', $db, "Ce pseudonyme est déjà utilisé pour un autre compte..");
+            }
+        $validator->isEmail('email', "Cet adresse email n'est pas valide.");
+        if ($validator->isValid()){    
+            $validator->isUniq('email', $db, "Cet adresse email  est déjà utilisée pour un autre compte.");
+            }
+        $validator->isConfirmed('password', "Les mots de passe ne correspondent pas.");
+    
+// Si aucune erreur n'a été détectée, création du compte utilisateur
+// Sinon affichage des erreurs.
+        if ($validator->isValid()){
+            $auth = new Auth();
+            $auth->register($db, $_POST['username'], $_POST['password'], $_POST['email']);
+            Session::getInstance()->setFlash('success', "Un email de confirmation vous a été envoyé pour validation du compte");
+            App::redirect("login.php");
         }
         else{
-            $req = $pdo->prepare("SELECT login from " . $db_config['db_name'] . "." .$db_config['user_table'] . " WHERE login = ?");
-            $req->execute([ $_POST['username'] ]);
-            $user = $req->fetch();
-            if ($user){
-                $errors['username'] = "Pseudo deja utilisé";}
+            $errors = $validator->getErrors();
         }
-        if(empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-            $errors['email'] = "Email invalide";}
-        else{
-            $req = $pdo->prepare("SELECT email from " . $db_config['db_name'] . "." .$db_config['user_table'] . " WHERE email = ?");
-            $req->execute([ $_POST['email'] ]);
-            $email = $req->fetch();
-            if ($email){
-                $errors['email'] = "Email deja utilisée";}
-        }
-        if(empty($_POST['password']) || ($_POST['password'] != $_POST['confirm']) || strlen($_POST['password']) < 8 || strlen($_POST['password']) >= 50){
-            $errors['password'] = "Pwd invalide";
-        }
-        if (empty($errors)){
-            $req = $pdo->prepare("INSERT INTO " . $db_config['db_name'] . "." .$db_config['user_table'] . " SET login = ?, password = ?, email = ?, confirmation_token = ?");
-            $pwd = password_hash($_POST['password'], PASSWORD_BCRYPT);
-            echo ('<br>');
-            $token = random_str(60);
-            $req->execute([ $_POST['username'], $pwd, $_POST['email'], $token ]);
-            $user_id = $pdo->lastInsertID();
-            var_dump($_POST);
-            mail($_POST['email'], "Confirmation du compte", "merci de cliquer coco !\n\nlocalhost/confirm.php?id=$user_id&token=$token");
-            $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour validation du compte";
-            header('location: login.php');
-        }
-    }
+}
+
+    
 ?>
 
 <!DOCTYPE html>
@@ -77,7 +69,7 @@ require_once "includes/tools.php";
     </div>
     <div class="form-group">
         <label for="">Password confirmatiom</label>
-        <input type="password" name="confirm" class="form-control"/>
+        <input type="password" name="password_confirm" class="form-control"/>
     </div>
     <div>
         <button type="submit" class="btn btn-summary"> Soumettre</button>

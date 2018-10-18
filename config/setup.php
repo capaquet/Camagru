@@ -1,5 +1,5 @@
 <?php
-require_once('database.php');
+require_once('info_db.php');
 
 init_db($db_config);
 
@@ -30,11 +30,13 @@ try
 {
   $sql = "CREATE TABLE IF NOT EXISTS ".$db_config['db_name'].".".$db_config['user_table']."
   (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-   login VARCHAR(30) UNIQUE NOT NULL COLLATE utf8_general_ci,
+   username VARCHAR(30) UNIQUE NOT NULL COLLATE utf8_general_ci,
    password VARCHAR(60) NOT NULL COLLATE utf8_general_ci,
    email VARCHAR(50) UNIQUE NOT NULL COLLATE utf8_general_ci,
    confirmation_token VARCHAR(60),
-   confirmation_date DATETIME,
+   confirmation_date DATETIME DEFAULT NULL,
+   reset_token VARCHAR(60) DEFAULT NULL,
+   reset_date DATETIME,
    notification BOOLEAN DEFAULT 1,
    admim_status BOOLEAN DEFAULT 0
   )";

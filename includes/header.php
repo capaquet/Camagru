@@ -1,9 +1,6 @@
-<!doctype html>
-<?php 
-if (session_status() == PHP_SESSION_NONE){
-  session_start();
-}
-?>
+<?php require_once "includes/bootstrap.php"; ?>
+
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -29,13 +26,13 @@ if (session_status() == PHP_SESSION_NONE){
             </div>
 </nav>
 <div class="container">
-  <?php if(isset($_SESSION['flash'])): ?>
-    <?php foreach($_SESSION['flash'] as $type => $message): ?>
+  <?php if(Session::getInstance()->hasFlash()): ?>
+    <?php foreach(Session::getInstance()->getFlash() as $type => $message): ?>
       <div class ="alert alert-<?= $type; ?>">
         <?= $message; ?>
       </div>
     <?php endforeach; ?>
-    <?php unset($_SESSION['flash']);?>
   <?php endif; ?>
 </div>
 </body> 
+<!doctype html>

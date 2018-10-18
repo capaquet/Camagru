@@ -1,20 +1,13 @@
 <?php
+    require 'includes/bootstrap.php';
 
-$user_id = $_GET['id'];
-$token = $_GET['token'];
-require 'includes/db.php';
-$req = $pdo->prepare("SELECT * FROM " . $db_config['db_name'] . "." .$db_config['user_table'] . " WHERE id = ?");
-$req->execute([$user_id]);
-$user = $req->fetch();
-session_start();
-
-if ($user && $user->confirmation_token == $token){
-    session_start();
-    $pdo->prepare("UPDATE " . $db_config['db_name'] . "." .$db_config['user_table'] . " SET confirmation_token = NULL, confirmation_date = NOW() WHERE id = ?")->execute([$user_id]);
-    $_SESSION['auth'] = $user;
-    $_SESSION['flash']['success'] = "Inscription confirmée. Vous êtes connecté";
-    header('location: account.php');
-} else{
-    $_SESSION['flash']['danger'] = "Ce token n'est plus valide";
-    header('Location: login.php');
-}
+    $db = App::getDatabase();
+    $auth = New Auth();
+    if (auth::confirm($db, $_GET['id'], $_GET['token'], Session::getInstance())){
+        Session::getInstance()->setFlash("success", "Votre compte a bien été validé");
+        App::redirect("account.php");
+    }
+    else{
+        Session::getInstance()->setFlash("danger", "Ce token n'est plus valide.");
+        App::redirect("login.php");
+    }

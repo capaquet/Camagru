@@ -1,9 +1,12 @@
 <?php
-    require 'includes/tools.php';
+    require 'includes/bootstrap.php';
 
-    control_auth(); 
+    $auth = new Auth();
+    $auth->restrict(Session::getInstance());
+
+
     if (!empty($_POST)){
-        if ($_POST['password'] != $_POST['password_confirmation']){
+        if (isempty($_POST['password']) || $POST['password'] != $_POST['password_confirmation']){
             $_SESSION['flash']['danger'] = "Les mots de passe ne correspondent pas.";
         }
         else{
