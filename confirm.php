@@ -1,10 +1,9 @@
 <?php
-    require 'includes/bootstrap.php';
+    require_once 'includes/bootstrap.php';
 
     $db = App::getDatabase();
-    $auth = New Auth();
-    if (auth::confirm($db, $_GET['id'], $_GET['token'], Session::getInstance())){
-        Session::getInstance()->setFlash("success", "Votre compte a bien été validé");
+    if (App::getAuth()->confirm($db, $_GET['id'], $_GET['token'], Session::getInstance())){
+        Session::getInstance()->setFlash("success", "Votre compte a bien été validé.");
         App::redirect("account.php");
     }
     else{

@@ -1,9 +1,14 @@
 <?php require 'includes/header.php';?>
-<?php require 'includes/tools.php';?>
-<?php require 'includes/bootstrap.php';?>
+ 
+<?php require_once 'includes/bootstrap.php';?>
 <?php
+    $auth = App::getAuth();
+    $auth->connectFromCookie();
+
+
+
     if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
-        require 'includes/db.php';
+        require 'config/info_db.php';
         $req = $pdo->prepare("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE (login = :username OR email = :username)");
         $req->execute(['username' => $_POST['username']]);
         $user = $req->fetch();

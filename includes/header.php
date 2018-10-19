@@ -1,6 +1,5 @@
 <?php require_once "includes/bootstrap.php"; ?>
 
-
 <html lang="en">
   <head>
     <meta charset="utf-8">

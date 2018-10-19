@@ -1,5 +1,5 @@
 <?php
-    require 'includes/bootstrap.php';
+    require_once 'includes/bootstrap.php';
 
     if (!empty($_POST)){
 
@@ -21,8 +21,7 @@
 // Si aucune erreur n'a été détectée, création du compte utilisateur
 // Sinon affichage des erreurs.
         if ($validator->isValid()){
-            $auth = new Auth();
-            $auth->register($db, $_POST['username'], $_POST['password'], $_POST['email']);
+            App::getAuth()->register($db, $_POST['username'], $_POST['password'], $_POST['email']);
             Session::getInstance()->setFlash('success', "Un email de confirmation vous a été envoyé pour validation du compte");
             App::redirect("login.php");
         }

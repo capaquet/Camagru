@@ -1,9 +1,6 @@
 <?php
-    require 'includes/bootstrap.php';
-
-    $auth = new Auth();
-    $auth->restrict(Session::getInstance());
-
+    require_once 'includes/bootstrap.php';
+    $auth = App::getAuth()->restrict();
 
     if (!empty($_POST)){
         if (isempty($_POST['password']) || $POST['password'] != $_POST['password_confirmation']){
