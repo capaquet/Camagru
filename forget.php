@@ -1,29 +1,18 @@
-<?php require 'includes/header.php';?>
-<?php require 'includes/tools.php';?>
 <?php
+    require_once 'includes/bootstrap.php';
     if(!empty($_POST) && !empty($_POST['email'])){
-        require 'includes/db.php';
-        $req = $pdo->prepare("SELECT * FROM ".$db_config['db_name'].".".$db_config['user_table']." WHERE email = ? AND confirmation_date IS NOT NULL");
-        $req->execute([$_POST['email']]);
-        $user = $req->fetch();
-        var_dump($user);
-        if($user){ 
-            session_start();
-            $reset_token = random_str(60);
-            $pdo->prepare("UPDATE ".$db_config['db_name'].".".$db_config['user_table']." SET reset_token = ?, reset_date = NOW() WHERE id = ?")->execute([$reset_token, $user->id]);
-            $_SESSION['flash']['success'] = "Instructions de réinitialisation du mot de passe envoyé par email.";
-            mail($_POST['email'], "Réinitialisation du mot de passe", "merci de cliquer coco !\n\nlocalhost/reset.php?id={$user->id}&token=$reset_token");
-            header('location: login.php');
-            echo "yyyoooooolooooo";
-            exit();
-        }
-        else{
-            echo "yyyooooooloooooddddddddd";
-            $_SESSION['flash']['danger'] = "Aucun compte ne correspond à cette adresse.";
+        $db = App::getDatabase();
+        $auth = App::getAuth();
+        if($auth->resetPassword($db, $_POST['email'])){
+            Session::getInstance()->setFlash('success', "Instructions de réinitialisation du mot de passe envoyé par email.");
+            App::redirect('login.php');
+        }else{
+            Session::getInstance()->setFlash('danger', "Aucun compte ne correspond à cette adresse.");
         }
     }
 ?>
 
+<?php require 'includes/header.php';?>
 <h1>Récupération de votre mot de passe</h1>
 <form action="" method="POST">
     <div class="form-group">

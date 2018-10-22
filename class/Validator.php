@@ -41,7 +41,7 @@ class Validator{
     }
 
 // Vérification de la taille du mot de passe et de sa confirmation
-    public function isConfirmed($field, $errorMsg){
+    public function isConfirmed($field, $errorMsg = ''){
         if(empty($this->getField($field)) || strlen($this->getField($field)) < 8 || strlen($this->getField($field)) >= 50
         || $this->getField($field) != $this->getField($field.'_confirm')){      
             $this->errors[$field] = $errorMsg;

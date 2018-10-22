@@ -1,52 +1,32 @@
-<?php require 'includes/header.php';?>
-<?php require 'includes/tools.php';?>
-
 <?php
+    require_once 'includes/bootstrap.php';
     if (isset($_GET['id']) && isset($_GET['token'])){
-        require "includes/db.php";
-        $req = $pdo->prepare('SELECT * FROM '.$db_config['db_name'].'.'.$db_config['user_table'].' WHERE id = ? AND token = ? AND reset_date > DATE_SUB(NOW() INTERVAL 30 MINUTE)');
-        $req->execute([$_GET['id'], $_GET['reset_token']]);
-        $user = $req->fetch();
-        if($user){
+        $auth = App::getAuth();
+        $db = App::getDatabase();
+        $user = $auth->getUserFromToken($db, $_GET['id'], $_GET['token']);
+        if ($user){       
             if (!empty($_POST)){
-                if (!empty($_POST['password']) && !empty($_POST['password']) && $_POST['password'] == $_POST['password_comnfirm']){
-                    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-                    $pdo->prepare('UPDATE '.$db_config['db_name'].'.'.$db_config['user_table'].' SET password = ?, reset_token = NULL reset_Date = NULL WHERE id = ?');
-                    $pdo->execute([$password, 'id' => $user->id]);
-                    session_start();
-                    $_SESSION['flash']['success'] = "Mot de passe modifié";
-                    header('location : account.php');
-                    exit();
+                $validator = new Validator($_POST);
+                $validator->isConfirmed('password');
+                if ($validator->isValid()){
+                    $password = $auth->hashPassword($_POST['password']);
+                    $db->query('UPDATE '.$db_config['db_name'].'.'.$db_config['user_table'].' SET password = ?, reset_token = NULL reset_Date = NULL WHERE id = ?', [$password, $_GET['id']]);
+                    $auth->connect('$user');
+                    Session::getInstance()->setFlash('success', "Mot de passe modifié avec succès.");     
+                    App::redirect('account.php');
                 }
             }
+        }else{
+            Session::getInstance()->setFlash('danger', "ce token n'est pas valide.");
+            App::redirect('login.php');
         }
     }
     else{
-        session_start();
-        $_SESSION['flash']['danger'] = "Ce token n'est pas valide.";
-        header('location: login.php');
-        exit();
-    }
-
-    if(!empty($_POST) && !empty($_POST['password']) && !empty($_POST['password_confirm'])){
-        require 'includes/db.php';
-        $req = $pdo->prepare("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE (login = :username OR email = :username)");
-        $req->execute(['username' => $_POST['username']]);
-        $user = $req->fetch();
-        if(password_verify($_POST['password'], $user->password)){
-            $_SESSION['auth'] = $user;
-            $_SESSION['flash']['success'] = "Vous êtes maintenant connecté.";
-            header('location: account.php');
-            exit();
-        }
-        else{
-            $_SESSION['flash']['danger'] = "Email ou mot de passe incorrect";
-            header('location: login.php');
-            exit();
-        }
+        App::redirect('login.php');
     }
 ?>
 
+<?php require 'includes/header.php';?>
 <h1>Se connecter</h1>
 <form action="" method="POST">
     <div class="form-group">

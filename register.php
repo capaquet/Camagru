@@ -1,8 +1,7 @@
 <?php
-    require_once 'includes/bootstrap.php';
+    require 'includes/bootstrap.php';
 
     if (!empty($_POST)){
-
         $errors = array();
         $db = App::getDatabase();
 

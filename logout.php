@@ -1,6 +1,6 @@
 <?php
-    session_start();
-    unset($_SESSION['auth']);
-    $_SESSION['flash']['success'] = "Vous êtes maintenant déconneté";
-    header("location: login.php");
+    require_once 'includes/bootstrap.php';
+    App::getAuth()->logout();
+    Session::Getinstance()->setFlash('success', "Vous êtes maintenant déconnecté.");
+    App::redirect("login.php");
 ?>

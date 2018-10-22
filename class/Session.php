@@ -6,7 +6,7 @@ class Session{
 
 // Methode "singleton" - permet de n'ouvrir qu'une seule session
     static function getInstance(){
-        if (!self::$instance )
+        if (!self::$instance)
             self::$instance = new Session();
         return self::$instance;
     }
@@ -35,5 +35,9 @@ class Session{
 
     public function read($key){
         return isset($_SESSION[$key]) ? $_SESSION[$key] : null ;
+    }
+
+    public function delete($key){
+        unset($_SESSION[$key]);
     }
 }

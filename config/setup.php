@@ -37,6 +37,7 @@ try
    confirmation_date DATETIME DEFAULT NULL,
    reset_token VARCHAR(60) DEFAULT NULL,
    reset_date DATETIME,
+   remember_token VARCHAR(250),
    notification BOOLEAN DEFAULT 1,
    admim_status BOOLEAN DEFAULT 0
   )";
