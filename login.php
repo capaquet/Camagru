@@ -1,13 +1,14 @@
-<?php require_once 'includes/bootstrap.php';?>
 <?php
+    require_once 'includes/bootstrap.php';
 
     $auth = App::getAuth();
-    $db = App::getDatabse();
+    $db = App::getDatabase();
     $auth->connect_from_cookie($db);
-
-    if ($auth->user){
+//Si l'utilisateur est déjà connecté, redirection vers account.php
+    if ($auth->user()){
         App::redirect('account.php');
     }
+
     if(!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])){
         $user = $auth->login($db, $_POST['username'], $_POST['password'], isset($_POST['remember']));
         $session = Session::getInstance();
@@ -16,7 +17,7 @@
             App::redirect('account.php');
         }
         else{
-            $session->setFlash('success', "Email ou mot de passe incorrect");
+            $session->setFlash('danger', "Email ou mot de passe incorrect");
         }
     }
 ?>

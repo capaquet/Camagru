@@ -5,7 +5,7 @@ class Auth{
     private $options = [
         'restriction_msg' => "Vous n'avez pas le droit d'accéder à cette page."
     ];
-    private $sessinon;
+    private $session;
 
     public function __construct($session, $options = []){
         $this->options = array_merge($this->options, $options);
@@ -17,14 +17,14 @@ class Auth{
         $password = password_hash($password, PASSWORD_BCRYPT);
         require '/app/config/info_db.php';         
         $db->query("INSERT INTO ".$db_config['db_name'].".".$db_config['user_table']." SET username= ?, password = ?, email = ?, confirmation_token = ?",[
-             $username,
+            $username,
             $password,
             $email,
             $token
         ]);      
         $user_id = $db->lastInsertID();
-
-        mail($email, "Confirmation du compte", "merci de cliquer coco !\n\nlocalhost/confirm.php?id=$user_id&token=$token");
+        
+        Email::send($user_id, $email, $token);
     }
 
     public function confirm($db, $user_id, $token){
@@ -42,7 +42,7 @@ class Auth{
     }
 
     public function restrict(){
-        if(!$this->session->read(['auth'])){
+        if(!$this->session->read('auth')){
             $this->session->setFlash('danger', $this->options['restriction_msg']);
             App::redirect('login.php');
             exit();  
@@ -50,10 +50,10 @@ class Auth{
     }
 
     public function user(){
-        if(!$this->session->read(['auth'])){
+        if(!$this->session->read('auth')){
             return false;
         }
-        return $this->session->read(['auth']);
+        return $this->session->read('auth');
     }
 
     public function connect($user){
@@ -61,10 +61,12 @@ class Auth{
     }
 
     public function connect_from_cookie($db){
-        if (isset($_COOKIE['remember']) && !$this->user){
+//        if (isset($_COOKIE['remember']) && !$this->user){
+        if (isset($_COOKIE['remember']) && !$this->session->read('user')){
             $remember_token = $_COOKIE['remember'];
             $split = explode('==', $remember_token);
             $user_id = $split[0];
+            require '/app/config/info_db.php';
             $user = $db->query("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE id = ?", [$user_id])->fetch();
             if ($user){
                 $expected = $user_id . '==' . $user->remember_token . sha1($user_id . 'camagru');
@@ -84,15 +86,16 @@ class Auth{
     }
  
     public function remember($db, $user_id){
+        require '/app/config/info_db.php';
         $remember_token = Str::random(250);
         $db->query('UPDATE ' .$db_config['db_name'].".".$db_config['user_table']. " SET remember_token = ? WHERE Id = ?",[$remember_token, $user->id]);
         setcookie('remember', $user_id . '==' . $remember_token . sha1($user_id.'camagru'), time() + 60 * 60 * 24 * 7);
     }
 
     public function login($db, $username, $password, $remember = false){
-        require 'config/info_db.php';
-        $user = $db->query("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE (login = :username OR email = :username)",['username' => $username])->fetch();
-        if(password_verify($_POST['password'], $user->password)){
+        require '/app/config/info_db.php';
+        $user = $db->query("SELECT * FROM " .$db_config['db_name'].".".$db_config['user_table']. " WHERE (username = :username OR email = :username)",['username' => $username])->fetch();
+        if($user && password_verify($_POST['password'], $user->password)){
             $this->connect($user);
             if ($remember){
                 $this->remember($db, $user->id);
@@ -110,6 +113,7 @@ class Auth{
     }
 
     public function resetPassword($db, $email){
+        require '/app/config/info_db.php';    
         $user = $db->query("SELECT * FROM ".$db_config['db_name'].".".$db_config['user_table']." WHERE email = ? AND confirmation_date IS NOT NULL", $email)->fetch();
         if($user){
             $reset_token = Str::random(60);

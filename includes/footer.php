@@ -1,2 +1,3 @@
 </body>
 </html>
+<!doctype html>

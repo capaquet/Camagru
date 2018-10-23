@@ -1,10 +1,20 @@
 <?php
     require 'includes/bootstrap.php';
 
+//Connexion a la DB, vérification de la connexion utilisateur
+    $db = App::getDatabase();
+    $auth = App::getAuth();
+    $auth->connect_from_cookie($db);
+
+//Si l'utilisateur est déjà connecté, redirection vers account.php
+    if ($auth->user()){
+        Session::getInstance()->setFlash('success', "Vous êtes déjà connecté.");
+        App::redirect('account.php');
+    }
+
     if (!empty($_POST)){
         $errors = array();
         $db = App::getDatabase();
-
 //Vérication des informations utilisateurs
         $validator = new Validator($_POST);
         $validator->isAlpha_num('username', "Ce pseudo n'est pas valide.");
@@ -16,29 +26,23 @@
             $validator->isUniq('email', $db, "Cet adresse email  est déjà utilisée pour un autre compte.");
             }
         $validator->isConfirmed('password', "Les mots de passe ne correspondent pas.");
-    
-// Si aucune erreur n'a été détectée, création du compte utilisateur
-// Sinon affichage des erreurs.
+// Si aucune erreur n'a été détectée, création du compte utilisateur, sinon affichage des erreurs.
         if ($validator->isValid()){
-            App::getAuth()->register($db, $_POST['username'], $_POST['password'], $_POST['email']);
+            
+            $info = App::getAuth()->register($db, $_POST['username'], $_POST['password'], $_POST['email']);
             Session::getInstance()->setFlash('success', "Un email de confirmation vous a été envoyé pour validation du compte");
             App::redirect("login.php");
         }
         else{
             $errors = $validator->getErrors();
         }
-}
-
-    
+} 
+//Ajouter les notifications
 ?>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
-    <title>Accueil</title>
-  </head>
+
+<?php require 'includes/header.php';?>
+
 
 <h1>INSCRIPTION</h1>
 <?php if (!empty($errors)): ?>

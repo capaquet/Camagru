@@ -1,17 +1,18 @@
 <?php require_once "includes/bootstrap.php"; ?>
 
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
-    <title>TEST GRAFIKART</title>
+    <link rel="stylesheet" type="text/css" href="">
+    <title>Camagru Cpaquet</title>
   </head>
 
 <body>
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="" aria-labelledby="dropdown01">
               <ul class ="navbar-nav">
@@ -24,6 +25,7 @@
               </ul>
             </div>
 </nav>
+
 <div class="container">
   <?php if(Session::getInstance()->hasFlash()): ?>
     <?php foreach(Session::getInstance()->getFlash() as $type => $message): ?>
@@ -33,5 +35,4 @@
     <?php endforeach; ?>
   <?php endif; ?>
 </div>
-</body> 
-<!doctype html>
+

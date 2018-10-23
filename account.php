@@ -1,6 +1,6 @@
 <?php
     require_once 'includes/bootstrap.php';
-    $auth = App::getAuth()->restrict();
+    App::getAuth()->restrict();
 
     if (!empty($_POST)){
         if (isempty($_POST['password']) || $POST['password'] != $_POST['password_confirmation']){
@@ -15,11 +15,10 @@
             
         }
     }
-
 ?>
 <?php require 'includes/header.php'; ?>
 
-<h1>Bonjour <?= $_SESSION['auth']->login; ?></h1>
+<h1>Bonjour <?= $_SESSION['auth']->username; ?></h1>
 
 <form action="" method="post">
 <div class ="form-group">
