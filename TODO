@@ -1,0 +1,5 @@
+utiliser strip_tags($str) pour nettoyer les input utilisateur des balises html
+
+Gestion des erreurs de PDO prepare
+
+Gestion des flash et du js

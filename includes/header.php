@@ -7,7 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
-    <link rel="stylesheet" type="text/css" href="">
+    <link rel="stylesheet" type="text/css" href="../css/camagru.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <title>Camagru Cpaquet</title>
   </head>
 

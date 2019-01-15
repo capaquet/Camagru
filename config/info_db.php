@@ -7,5 +7,6 @@ $db_config = [
     "init" => "mysql:host=db;port=3306",
     "db_name" => "camagru_db",
     "user_table" => "user_info",
+    "img_table" => "images",
     ];
 ?>

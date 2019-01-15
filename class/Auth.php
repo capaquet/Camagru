@@ -15,7 +15,7 @@ class Auth{
     public function register($db, $username, $password, $email){
         $token = Str::random(60);
         $password = password_hash($password, PASSWORD_BCRYPT);
-        require '/app/config/info_db.php';         
+        require '/app/config/info_db.php';   
         $db->query("INSERT INTO ".$db_config['db_name'].".".$db_config['user_table']." SET username= ?, password = ?, email = ?, confirmation_token = ?",[
             $username,
             $password,

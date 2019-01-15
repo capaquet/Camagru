@@ -30,3 +30,7 @@
 <button class="btn btn-primary">Changer mon mot de passe</button>
 </form>
 <?php require 'includes/footer.php';?>
+
+
+<!-- supprimer mon compte -->
+<!-- modifier email, pseudo, mot de passe -->
